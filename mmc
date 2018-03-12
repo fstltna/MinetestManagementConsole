@@ -400,7 +400,10 @@ while (-1)
 	}
 	elsif ($menuselection eq "2")
 	{
-		system("$InitDName stop");
+		if ($d->yesno( text => "Confirm stopping the server", text => "Are you sure you want to shut down the server?" ))
+		{
+			system("$InitDName stop");
+		}
 	}
 	elsif ($menuselection eq "3")
 	{
