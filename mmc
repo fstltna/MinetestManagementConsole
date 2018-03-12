@@ -10,6 +10,7 @@ my $StatsFileOutput = "/sbbs/doors/crobots/stats.txt";
 my $FileEditor = "/bin/nano -R";
 my $CrobotsExe = "/sbbs/doors/crobots/crobots";
 my $InitDName = "/etc/init.d/minetest";
+my $MINETESTDIR = "/root/minetest";
 
 ###################################################
 # No changes below here
@@ -57,11 +58,19 @@ sub CheckServerStatus
 
 sub MainMenu
 {
+	my $WantRespawn="ON";
 	CheckServerStatus();
-	$menuselection = $d->menu( title => "Main Menu", text => "Server is $ServerStatus - Select one:",
+	if (-f "$MINETESTDIR/nostart")
+	{
+		$WantRespawn="OFF";
+	}
+
+	$menuselection = $d->menu( title => "Main Menu", text => "Server is $ServerStatus and respawn is $WantRespawn - Select one:",
                             list => [ '1', 'Start Server',
                                       '2', 'Stop Server',
                                       '3', 'Server Console',
+                                      '4', 'Turn Off Respawn',
+                                      '5', 'Turn Respawn On',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -412,11 +421,16 @@ while (-1)
 	}
 	elsif ($menuselection eq "4")
 	{
-		BattleArena("Test");
+		# Turn off respawn
+		system("touch $MINETESTDIR/nostart");
 	}
 	elsif ($menuselection eq "5")
 	{
-		BattleStats();
+		# Turn respawn back on
+		if (-f "$MINETESTDIR/nostart")
+		{
+			unlink("$MINETESTDIR/nostart");
+		}
 	}
 }
 
