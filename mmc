@@ -403,6 +403,7 @@ while (-1)
 		if ($d->yesno( text => "Confirm stopping the server", text => "Are you sure you want to shut down the server?" ))
 		{
 			system("$InitDName stop");
+			sleep(5);
 		}
 	}
 	elsif ($menuselection eq "3")
