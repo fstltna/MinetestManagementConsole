@@ -7,7 +7,7 @@ use Term::ReadKey;
 use Term::ANSIScreen qw(cls);
 
 my $StatsFileOutput = "/sbbs/doors/crobots/stats.txt";
-my $FileEditor = "/bin/nano -R";
+my $FileEditor = "/bin/nano";
 my $CrobotsExe = "/sbbs/doors/crobots/crobots";
 my $InitDName = "/etc/init.d/minetest";
 my $MINETESTDIR = "/root/minetest";
@@ -71,6 +71,7 @@ sub MainMenu
                                       '3', 'Server Console',
                                       '4', 'Turn Off Respawn',
                                       '5', 'Turn Respawn On',
+                                      '6', 'Edit World Cfg',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -432,6 +433,11 @@ while (-1)
 		{
 			unlink("$MINETESTDIR/nostart");
 		}
+	}
+	elsif ($menuselection eq "6")
+	{
+		# Edit world.mt file
+		system("$FileEditor $MINETESTDIR/worlds/world/world.mt");
 	}
 }
 
