@@ -417,6 +417,7 @@ while (-1)
 	}
 	elsif ($menuselection eq "3")
 	{
+		$d->msgbox( text => "To exit the minetest console and return to MMC press CTRL-A CTRL-D" );
 		system("screen -r");
 	}
 	elsif ($menuselection eq "4")
