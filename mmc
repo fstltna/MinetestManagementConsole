@@ -72,6 +72,7 @@ sub MainMenu
                                       '4', 'Turn Off Respawn',
                                       '5', 'Turn Respawn On',
                                       '6', 'Edit World Cfg',
+                                      '7', 'Edit minetest.conf',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -438,6 +439,11 @@ while (-1)
 	{
 		# Edit world.mt file
 		system("$FileEditor $MINETESTDIR/worlds/world/world.mt");
+	}
+	elsif ($menuselection eq "7")
+	{
+		# Edit minetest.conf file
+		system("$FileEditor $MINETESTDIR/minetest.conf");
 	}
 }
 
