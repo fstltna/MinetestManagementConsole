@@ -10,12 +10,15 @@ my $FileEditor = "/bin/nano";
 my $InitDName = "/etc/init.d/minetest";
 my $MINETESTDIR = "/root/minetest";
 my $BackupCommand = "/root/MineBackup/minebackup.pl";
+my $PagerCommand = "/usr/bin/less";
+my $Logfile = "/root/minetest/minetest.log";
+my $PlayersDir = "/var/games/minetest-server/.minetest/worlds/world/players";
 
 ###################################################
 # No changes below here
 ###################################################
 
-my $MMC_ver = "1.0.0";
+my $MMC_ver = "1.1.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -73,6 +76,8 @@ sub MainMenu
                                       '6', 'Edit World Cfg',
                                       '7', 'Edit minetest.conf',
                                       '8', 'Run Backup',
+                                      '9', 'View Log',
+                                      '10', 'View Players',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -207,7 +212,23 @@ while (-1)
 	elsif ($menuselection eq "8")
 	{
 		# Run a backup
+		system("clear");
 		system("$BackupCommand");
+		print "Press Enter To Continue";
+		my $entered = <STDIN>;
+	}
+	elsif ($menuselection eq "9")
+	{
+		# View log file
+		system("$PagerCommand $Logfile");
+	}
+	elsif ($menuselection eq "10")
+	{
+		# View users
+		system("clear");
+		system("ls $PlayersDir");
+		print "Press Enter To Continue";
+		my $entered = <STDIN>;
 	}
 }
 
