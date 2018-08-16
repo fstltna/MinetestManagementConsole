@@ -1,2 +1,2 @@
 # MinetestManagementConsole
-Allows you to manage your Minetest server with a text based GUI - not even alpha yet! Will update when it is useable...
+Allows you to manage your Minetest server with a text based GUI
