@@ -18,6 +18,8 @@ my $PlayersDir = "/var/games/minetest-server/.minetest/worlds/world/players";
 # No changes below here
 ###################################################
 
+my $MySettings = "$ENV{'HOME'}/.mmcrc";
+
 my $MMC_ver = "1.2.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
@@ -42,7 +44,65 @@ if (($d->state() eq "ESC") || ($d->state() eq "CANCEL"))
 	exit 0;
 }
 
+# Check for config file
+if (-f $MySettings)
+{
+	# Read in settings
+	open (my $FH, "<", $MySettings) or die "Could not read default file '$MySettings' $!";
+	while (<$FH>)
+	{
+		my ($Command, $Setting) = split(/=/, $_);
+		print "Saw command '$Command'\n";
+		if ($Command eq "fileeditor")
+		{
+			$FileEditor = $Setting;
+		}
+		if ($Command eq "initdname")
+		{
+			$InitDName = $Setting;
+		}
+		if ($Command eq "minetestdir")
+		{
+			$MINETESTDIR = $Setting;
+		}
+		if ($Command eq "backupcommand")
+		{
+			$BackupCommand = $Setting;
+		}
+		if ($Command eq "pagercommand")
+		{
+			$PagerCommand = $Setting;
+		}
+		if ($Command eq "logfile")
+		{
+			$LogFile = $Setting;
+		}
+		if ($Command eq "playerdir")
+		{
+			$PlayersDir = $Setting;
+		}
+
+my $name = <STDIN>;
+
+	}
+	close($FH);
+}
+else
+{
+	# Store defaults
+	open (my $FH, ">", $MySettings) or die "Could not create default file '$MySettings' $!";
+	print $FH "fileeditor=/bin/nano\n";
+	print $FH "initdname=/etc/init.d/minetest\n";
+	print $FH "minetestdir=/root/minetest\n";
+	print $FH "backupcommand=/root/MineBackup/minebackup.pl\n";
+	print $FH "pagercommand=/usr/bin/less\n";
+	print $FH "logfile=/root/minetest/minetest.log\n";
+	print $FH "playerdir=/var/games/minetest-server/.minetest/worlds/world/players\n";
+	close($FH);
+}
+
 my $menuselection = "";
+
 
 sub CheckServerStatus
 {
