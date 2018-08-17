@@ -18,7 +18,7 @@ my $PlayersDir = "/var/games/minetest-server/.minetest/worlds/world/players";
 # No changes below here
 ###################################################
 
-my $MMC_ver = "1.1.0";
+my $MMC_ver = "1.2.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -79,86 +79,6 @@ sub MainMenu
                                       '9', 'View Log',
                                       '10', 'View Players',
                                       'q', 'Quit MMC' ] );
-}
-
-sub GetBotVersion
-{
-	my $SourceString = shift;
-	my $SourcePos = rindex($SourceString, ':');
-	my $SourceName = substr($SourceString, $SourcePos + 2);
-	$SourceName = substr($SourceName, 0, length($SourceName) - 3);
-	$BotVersion = $SourceName;
-}
-sub GetBotName
-{
-	my $SourceString = shift;
-	my $SourcePos = rindex($SourceString, ':');
-	my $SourceName = substr($SourceString, $SourcePos + 2);
-	$SourceName = substr($SourceName, 0, length($SourceName) - 3);
-	$RobotName = $SourceName;
-}
-
-# Reads and parses header in robot file
-sub ReadBot
-{
-	my $RobotFile = shift;
-	$RobotName = "UnknownRobot";
-	$BotVersion = "???";
-	open(ROBOTFH, '<', $RobotFile) or die "Unable to read robot file $RobotFile: $!";
-	while(<ROBOTFH>)
-	{
-		chop;
-		if (substr($_, 0, 11) eq "/* Version:")
-		{
-			GetBotVersion($_)
-		}
-		elsif (substr($_, 0, 11) eq "/* BotName:")
-		{
-			GetBotName($_)
-		}
-	}
-	close(ROBOTFH);
-}
-
-sub ManageBots
-{
-	my $selectbot = $d->fselect( title => "Select Your Bot To Manage", path => "/sbbs/doors/crobots/robots/users/$UserName" );
-	$selectbot =~ s/\s+/_/g;
-	$selectbot =~ s/</_/g;
-	$selectbot =~ s/>/_/g;
-
-	if ($d->state() ne "OK")
-	{
-		$d->msgbox( title => "Selected Robot:", text => "No robot selected, aborting..." );
-		return;
-	}
-
-	if (substr($selectbot, -2) ne ".r")
-	{
-		$d->msgbox( title => "Selected Robot:", text => "File is not a robot, aborting... To create a bot end the name with \".r\"" );
-		return;
-	}
-
-	my $PathString = "/sbbs/doors/crobots/robots/users/$UserName";
-	if (substr($selectbot, 0, length($PathString)) ne $PathString)
-	{
-		$d->msgbox( title => "Selected Robot:", text => "Can only manage robots you own, aborting..." );
-		return;
-	}
-	# Does selection exist?
-	if (! -f "$selectbot")
-	{
-		# no
-		my $BotNamePos = rindex($selectbot, '/');
-		my $BotName = substr($selectbot, $BotNamePos + 1);
-		$d->msgbox( title => "Selected Robot:", text => "Robot \"$selectbot\" will be created..." );
-		open(MYFH, '>', $selectbot) or die $!;
-		print MYFH "/* Version: 1.0 */\n";
-		print MYFH "/* BotName: $BotName */\n";
-		print MYFH "/* Owner: $UserName */\n";
-		close(MYFH);
-	}
-	system ("$FileEditor \"$selectbot\"");
 }
 
 while (-1)
