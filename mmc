@@ -51,8 +51,8 @@ if (-f $MySettings)
 	open (my $FH, "<", $MySettings) or die "Could not read default file '$MySettings' $!";
 	while (<$FH>)
 	{
+		chop();
 		my ($Command, $Setting) = split(/=/, $_);
-		print "Saw command '$Command'\n";
 		if ($Command eq "fileeditor")
 		{
 			$FileEditor = $Setting;
@@ -75,15 +75,12 @@ if (-f $MySettings)
 		}
 		if ($Command eq "logfile")
 		{
-			$LogFile = $Setting;
+			$Logfile = $Setting;
 		}
 		if ($Command eq "playerdir")
 		{
 			$PlayersDir = $Setting;
 		}
-
-my $name = <STDIN>;
-
 	}
 	close($FH);
 }
