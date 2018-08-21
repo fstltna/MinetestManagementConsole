@@ -21,7 +21,7 @@ my $MinetestConf = "/root/minetest/minetest.conf";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.2.1";
+my $MMC_ver = "1.2.2";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -162,6 +162,7 @@ while (-1)
 		{
 			system("$InitDName stop");
 			sleep(5);
+			system("killall startminetest");
 		}
 	}
 	elsif ($menuselection eq "3")
