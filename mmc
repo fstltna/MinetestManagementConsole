@@ -21,7 +21,7 @@ my $MinetestConf = "/root/minetest/minetest.conf";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.2.2";
+my $MMC_ver = "1.3.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -141,6 +141,7 @@ sub MainMenu
                                       '8', 'Run Backup',
                                       '9', 'View Log',
                                       '10', 'View Players',
+                                      '11', 'Edit Settings',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -213,6 +214,11 @@ while (-1)
 		system("ls $PlayersDir");
 		print "Press Enter To Continue";
 		my $entered = <STDIN>;
+	}
+	elsif ($menuselection eq "11")
+	{
+		# Edit minetest.conf file
+		system("$FileEditor $MySettings");
 	}
 }
 
