@@ -1,4 +1,4 @@
-# Minetest Management Console (1.3.0)
+# Minetest Management Console (1.4.0)
 Allows you to manage your Minetest server with a text based GUI -  Official support sites: [Official Github Repo](https://github.com/fstltna/MinetestManagementConsole) - [Official Forum](https://minecity.online/index.php/forum/management-console)
 
 ---
