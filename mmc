@@ -22,7 +22,7 @@ my $MinetestWorld = "/root/minetest/worlds/world/world.mt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.4.0";
+my $MMC_ver = "1.4.1";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
