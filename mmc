@@ -12,9 +12,9 @@ my $MINETESTDIR = "/root/minetest";
 my $BackupCommand = "/root/MineBackup/minebackup.pl";
 my $PagerCommand = "/usr/bin/less";
 my $Logfile = "/root/minetest/minetest.log";
-my $PlayersDir = "/var/games/minetest-server/.minetest/worlds/world/players";
+my $PlayersDir = "/root/minetest/worlds/world/players";
 my $MinetestConf = "/root/minetest/minetest.conf";
-my $MinetestWorld = "/var/games/minetest-server/.minetest/worlds/world/world.mt";
+my $MinetestWorld = "/root/minetest/worlds/world/world.mt";
 
 ###################################################
 # No changes below here
@@ -104,9 +104,9 @@ else
 	print $FH "backupcommand=/root/MineBackup/minebackup.pl\n";
 	print $FH "pagercommand=/usr/bin/less\n";
 	print $FH "logfile=/root/minetest/minetest.log\n";
-	print $FH "playerdir=/var/games/minetest-server/.minetest/worlds/world/players\n";
+	print $FH "playerdir=/root/minetest/worlds/world/players\n";
 	print $FH "minetestconf=/root/minetest/minetest.conf\n";
-	print $FH "minetestworld=/var/games/minetest-server/.minetest/worlds/world/world.mt\n";
+	print $FH "minetestworld=/root/minetest/worlds/world/world.mt\n";
 	close($FH);
 }
 
