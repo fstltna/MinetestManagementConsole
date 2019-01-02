@@ -22,7 +22,7 @@ my $MinetestWorld = "/root/minetest/worlds/world/world.mt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.4.1";
+my $MMC_ver = "1.5.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -148,6 +148,7 @@ sub MainMenu
                                       '9', 'View Log',
                                       '10', 'View Players',
                                       '11', 'Edit Settings',
+                                      '12', 'Reset Server',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -225,6 +226,14 @@ while (-1)
 	{
 		# Edit minetest.conf file
 		system("$FileEditor $MySettings");
+	}
+	elsif ($menuselection eq "12")
+	{
+		# Reset server process
+		print "Killing Server Process\n";
+		system("killall /root/minetest/bin/minetestserver");
+		print "Process killed...";
+		sleep(5);
 	}
 }
 
