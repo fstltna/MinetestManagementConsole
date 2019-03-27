@@ -103,7 +103,7 @@ else
 	print $FH "minetestdir=/root/minetest\n";
 	print $FH "backupcommand=/root/MineBackup/minebackup.pl\n";
 	print $FH "pagercommand=/usr/bin/less\n";
-	print $FH "logfile=/root/minetest/minetest.log\n";
+	print $FH "logfile=/root/minetest/debug.txt\n";
 	print $FH "playerdir=/root/minetest/worlds/world/players\n";
 	print $FH "minetestconf=/root/minetest/minetest.conf\n";
 	print $FH "minetestworld=/root/minetest/worlds/world/world.mt\n";
