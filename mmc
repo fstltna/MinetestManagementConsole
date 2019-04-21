@@ -148,7 +148,7 @@ sub MainMenu
                                       '9', 'View Log',
                                       '10', 'View Players',
                                       '11', 'Edit Settings',
-                                      '12', 'Reset Server',
+                                      '12', 'Restart Server',
                                       'q', 'Quit MMC' ] );
 }
 
