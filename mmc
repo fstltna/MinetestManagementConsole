@@ -11,6 +11,7 @@ use Number::Bytes::Human qw(format_bytes parse_bytes);
 my $FileEditor = "/bin/nano";
 my $InitDName = "/etc/init.d/minetest";
 my $MINETESTDIR = "/root/minetest";
+my $MINEHOME = "/root";
 my $BackupCommand = "/root/MineBackup/minebackup.pl";
 my $PagerCommand = "/usr/bin/less";
 my $Logfile = "/root/minetest/debug.txt";
@@ -19,6 +20,7 @@ my $MinetestConf = "/root/minetest/minetest.conf";
 my $MinetestWorld = "/root/minetest/worlds/world/world.mt";
 my $BACKUP_DIR = "/root/backups";
 my $RestoreCommand = "tar xvzf";
+my $DEBUG_MODE = "off";
 
 ###################################################
 # No changes below here
@@ -38,6 +40,21 @@ if ($ENV{'EDITOR'})
 {
         $FileEditor = $ENV{'EDITOR'};
 }
+
+my $menuselection = "";
+
+sub PrintDebugCommand
+{
+	if ($DEBUG_MODE eq "off")
+	{
+		return;
+	}
+	my $PassedString = shift;
+	print "About to run:\n$PassedString\n";
+	print "Press Enter To Run This:";
+	my $entered = <STDIN>;
+}
+
 
 my $d = new UI::Dialog ( backtitle => "Minetest Management Console v$MMC_ver", height => 20, width => 65, listheight => 5,
 	order => [ 'ascii', 'cdialog', 'xdialog' ]);
@@ -112,6 +129,10 @@ if (-f $MySettings)
 		{
 			$RestoreCommand = $Setting;
 		}
+		if ($Command eq "minehome")
+		{
+			$MINEHOME = $Setting;
+		}
 	}
 	close($FH);
 }
@@ -124,18 +145,16 @@ else
 	print $FH "minetestdir=$MINETESTDIR\n";
 	print $FH "backupcommand=$BackupCommand\n";
 	print $FH "pagercommand=$PagerCommand\n";
-	print $FH "logfile=$LogFile\n";
+	print $FH "logfile=$Logfile\n";
 	print $FH "playerdir=$PlayersDir\n";
 	print $FH "minetestconf=$MINETESTDIR/minetest.conf\n";
 	print $FH "minetestworld=$MINETESTDIR/worlds/world/world.mt\n";
 	print $FH "debugmode=$DEBUG_MODE\n";
 	print $FH "backupdir=$BACKUP_DIR\n";
 	print $FH "restorecommand=$RestoreCommand\n";
+	print $FH "minehome=$MINEHOME\n";
 	close($FH);
 }
-
-my $menuselection = "";
-
 
 sub CheckServerStatus
 {
@@ -200,7 +219,7 @@ sub GetWhichBackup
 	#Ask user which one
 	while(-1)
 	{
-		print "Restore which backup? (1-5): ";
+		print "Restore which backup? (1-5) or \"quit\": ";
 		my $Chosen = <STDIN>;
 		chop ($Chosen);
 		if ((lc($Chosen) eq "q") || (lc($Chosen) eq "quit") || ($Chosen eq ""))
@@ -224,8 +243,6 @@ sub DoRestore
 	if ($WhichBackup eq "")
 	{
 		print "No backup selected\n";
-                print "Press Enter To Continue";
-                my $entered = <STDIN>;
 		return;
 	}
 	print "Using backup $WhichBackup...\n";
@@ -234,28 +251,28 @@ sub DoRestore
 	PrintDebugCommand("touch $MINETESTDIR/nostart");
 	system("touch $MINETESTDIR/nostart");
 	# Kill the server process
-	print "Killing SBBS process, please wait...";
-	KillBBS();
-	sleep(10);
+	print "Killing Minetest process, please wait...\n";
+	system("killall /root/minetest/bin/startminetest");
+	sleep(5);
 	# Create new folder
 	print "Creating new folder, please wait...";
-	PrintDebugCommand("mkdir $MINETESTDIR-new");
-	system("mkdir $MINETESTDIR-new");
-	PrintDebugCommand("touch $MINETESTDIR-new/nostart");
-	system("touch $MINETESTDIR-new/nostart");
+	PrintDebugCommand("mkdir $MINEHOME-new");
+	system("mkdir $MINEHOME-new");
+	PrintDebugCommand("touch $MINEHOME-new/nostart");
+	system("touch $MINEHOME-new/nostart");
 	# Swap folders
 	print "Swapping folders, please wait...";
-	PrintDebugCommand("mv $MINETESTDIR $MINETESTDIR-keep");
-	system("mv $MINETESTDIR $MINETESTDIR-keep");
-	PrintDebugCommand("mv $MINETESTDIR-new $MINETESTDIR");
-	system("mv $MINETESTDIR-new $MINETESTDIR");
-	PrintDebugCommand("rm -r $MINETESTDIR-keep");
-	system("rm -r $MINETESTDIR-keep");
+	PrintDebugCommand("mv $MINEHOME/minetest $MINEHOME/minetest-keep");
+	system("mv $MINEHOME/minetest $MINEHOME/minetest-keep");
+	PrintDebugCommand("mv $MINEHOME/minetest-new $MINEHOME/minetest");
+	system("mv $MINEHOME-new $MINETESTDIR");
+	PrintDebugCommand("rm -r $MINEHOME/minetest-keep");
+	system("rm -r $MINEHOME/minetest-keep");
 
 	# Do the restore
-	chdir ("/");
-	PrintDebugCommand("$RESTORE_COMMAND $BACKUP_DIR/syncbackup-$WhichBackup.tgz");
-	system("$RESTORE_COMMAND $BACKUP_DIR/syncbackup-$WhichBackup.tgz");
+	chdir ($MINEHOME);
+	PrintDebugCommand("$RestoreCommand $BACKUP_DIR/minebackup-$WhichBackup.tgz");
+	system("$RestoreCommand $BACKUP_DIR/minebackup-$WhichBackup.tgz");
 	unlink("$MINETESTDIR/nostart");
 }
 
@@ -330,7 +347,7 @@ while (-1)
 		{
 			system("$InitDName stop");
 			sleep(5);
-			system("killall startminetest");
+			system("killall /root/minetest/bin/startminetest");
 		}
 	}
 	elsif ($menuselection eq "3")
