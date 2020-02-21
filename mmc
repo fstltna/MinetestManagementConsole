@@ -28,7 +28,7 @@ my $DEBUG_MODE = "off";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.6.1";
+my $MMC_ver = "1.6.2";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";

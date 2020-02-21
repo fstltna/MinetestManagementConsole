@@ -1,4 +1,4 @@
-# Minetest Management Console (1.6.1)
+# Minetest Management Console (1.6.2)
 Allows you to manage your Minetest server with a text based GUI -  Official support sites: [Official Github Repo](https://github.com/fstltna/MinetestManagementConsole) - [Official Forum](https://minecity.online/index.php/forum/management-console)
 
 ---
@@ -16,4 +16,3 @@ Run "mmc". If you need to change any settings after this, edit "~/.mmcrc" and ma
 You also need to have my Minetest Startup Script and Minetest Backup Script installed.
 
 I then suggest you add this directory (MinetestManagementConsole) into your path, so that you can just run "git pull" to upgrade to the latest version of mmc as updates come out.
-
