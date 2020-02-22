@@ -21,6 +21,7 @@ my $MinetestWorld = "/root/minetest/worlds/world/world.mt";
 my $BACKUP_DIR = "/root/backups";
 my $RestoreCommand = "tar xvzf";
 my $DEBUG_MODE = "off";
+my $NewsFile = "/root/minetest/worlds/world/news.txt";
 
 ###################################################
 # No changes below here
@@ -28,7 +29,7 @@ my $DEBUG_MODE = "off";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.6.2";
+my $MMC_ver = "1.7.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -117,6 +118,10 @@ if (-f $MySettings)
 		{
 			$MinetestWorld = $Setting;
 		}
+		if ($Command eq "newsfile")
+		{
+			$NewsFile = $Setting;
+		}
 		if ($Command eq "debugmode")
 		{
 			$DEBUG_MODE = $Setting;
@@ -149,6 +154,7 @@ else
 	print $FH "playerdir=$PlayersDir\n";
 	print $FH "minetestconf=$MINETESTDIR/minetest.conf\n";
 	print $FH "minetestworld=$MINETESTDIR/worlds/world/world.mt\n";
+	print $FH "newsfile=$MINETESTDIR/worlds/world/news.txt\n";
 	print $FH "debugmode=$DEBUG_MODE\n";
 	print $FH "backupdir=$BACKUP_DIR\n";
 	print $FH "restorecommand=$RestoreCommand\n";
@@ -326,6 +332,7 @@ sub MainMenu
                                       '10', 'Online Players',
                                       '11', 'Edit Settings',
                                       '12', 'Restart Server',
+                                      '13', 'Edit News.txt',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -408,6 +415,11 @@ while (-1)
 		system("killall /root/minetest/bin/minetestserver");
 		print "Process killed...";
 		sleep(5);
+	}
+	elsif ($menuselection eq "13")
+	{
+		# Edit news.txt file
+		system("$FileEditor $NewsFile");
 	}
 }
 
