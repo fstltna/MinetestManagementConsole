@@ -29,7 +29,7 @@ my $NewsFile = "/root/minetest/worlds/world/news.txt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.7.0";
+my $MMC_ver = "1.8.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -346,7 +346,12 @@ while (-1)
 	}
 	if ($menuselection eq "1")
 	{
-		system("$InitDName start");
+                if ($d->yesno( text => "Confirm starting the server", text => "Are you sure you want to start the server? You should likely use option #12 instead..." ))
+                {
+                        PrintDebugCommand("$InitDName start");
+                        system("$InitDName start");
+                        sleep(10);
+                }
 	}
 	elsif ($menuselection eq "2")
 	{
