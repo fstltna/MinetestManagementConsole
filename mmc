@@ -10,18 +10,18 @@ use Number::Bytes::Human qw(format_bytes parse_bytes);
 
 my $FileEditor = "/bin/nano";
 my $InitDName = "/etc/init.d/minetest";
-my $MINETESTDIR = "/root/minetest";
-my $MINEHOME = "/root";
-my $BackupCommand = "/root/MineBackup/minebackup.pl";
+my $MINETESTDIR = "/home/mtowner/minetest";
+my $MINEHOME = "/home/mtowner";
+my $BackupCommand = "/home/mtowner/MineBackup/minebackup.pl";
 my $PagerCommand = "/usr/bin/less";
-my $Logfile = "/root/minetest/debug.txt";
-my $PlayersDir = "/root/minetest/worlds/world/players";
-my $MinetestConf = "/root/minetest/minetest.conf";
-my $MinetestWorld = "/root/minetest/worlds/world/world.mt";
-my $BACKUP_DIR = "/root/backups";
+my $Logfile = "/home/mtowner/minetest/debug.txt";
+my $PlayersDir = "/home/mtowner/minetest/worlds/world/players";
+my $MinetestConf = "/home/mtowner/minetest/minetest.conf";
+my $MinetestWorld = "/home/mtowner/minetest/worlds/world/world.mt";
+my $BACKUP_DIR = "/home/mtowner/backups";
 my $RestoreCommand = "tar xvzf";
 my $DEBUG_MODE = "off";
-my $NewsFile = "/root/minetest/worlds/world/news.txt";
+my $NewsFile = "/home/mtowner/minetest/worlds/world/news.txt";
 
 ###################################################
 # No changes below here
@@ -29,7 +29,7 @@ my $NewsFile = "/root/minetest/worlds/world/news.txt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.8.0";
+my $MMC_ver = "1.9.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -258,7 +258,7 @@ sub DoRestore
 	system("touch $MINETESTDIR/nostart");
 	# Kill the server process
 	print "Killing Minetest process, please wait...\n";
-	system("killall /root/minetest/bin/startminetest");
+	system("killall /home/mtowner/minetest/bin/startminetest");
 	sleep(5);
 	# Create new folder
 	print "Creating new folder, please wait...";
@@ -359,7 +359,7 @@ while (-1)
 		{
 			system("$InitDName stop");
 			sleep(5);
-			system("killall /root/minetest/bin/startminetest");
+			system("killall /home/mtowner/minetest/bin/startminetest");
 		}
 	}
 	elsif ($menuselection eq "3")
@@ -417,7 +417,7 @@ while (-1)
 	{
 		# Reset server process
 		print "Killing Server Process\n";
-		system("killall /root/minetest/bin/minetestserver");
+		system("killall /home/mtowner/minetest/bin/minetestserver");
 		print "Process killed...";
 		sleep(5);
 	}
