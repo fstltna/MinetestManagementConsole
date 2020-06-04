@@ -29,7 +29,7 @@ my $NewsFile = "/home/mtowner/minetest/worlds/world/news.txt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.9.0";
+my $MMC_ver = "1.9.1";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
