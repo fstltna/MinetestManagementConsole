@@ -9,7 +9,7 @@ use POSIX qw(strftime);
 use Number::Bytes::Human qw(format_bytes parse_bytes);
 
 my $FileEditor = "/bin/nano";
-my $InitDName = "/home/mtowner/minetest";
+my $InitDName = "/home/mtowner/bin/minetest";
 my $MINETESTDIR = "/home/mtowner/minetest";
 my $MINEHOME = "/home/mtowner";
 my $BackupCommand = "/home/mtowner/MineBackup/minebackup.pl";
