@@ -13,9 +13,13 @@ my $InitDName = "/home/mtowner/bin/minetest";
 my $MINETESTDIR = "/home/mtowner/minetest";
 my $MINEHOME = "/home/mtowner";
 my $BackupCommand = "/home/mtowner/MineBackup/minebackup.pl";
+my $UpdateCommand = "/usr/bin/git pull";
 my $PagerCommand = "/usr/bin/less";
 my $Logfile = "/home/mtowner/minetest/debug.txt";
 my $PlayersDir = "/home/mtowner/minetest/worlds/world/players";
+my $MMCDir = "/home/mtowner/MinetestManagementConsole";
+my $BackupToolDir = "/home/mtowner/MineBackup";
+my $StartupDir = "/home/mtowner/MinetestStartup";
 my $MinetestConf = "/home/mtowner/minetest/minetest.conf";
 my $MinetestWorld = "/home/mtowner/minetest/worlds/world/world.mt";
 my $BACKUP_DIR = "/home/mtowner/backups";
@@ -29,7 +33,7 @@ my $NewsFile = "/home/mtowner/minetest/worlds/world/news.txt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.9.1";
+my $MMC_ver = "1.10.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -98,6 +102,10 @@ if (-f $MySettings)
 		{
 			$BackupCommand = $Setting;
 		}
+		if ($Command eq "updatecommand")
+		{
+			$UpdateCommand = $Setting;
+		}
 		if ($Command eq "pagercommand")
 		{
 			$PagerCommand = $Setting;
@@ -109,6 +117,14 @@ if (-f $MySettings)
 		if ($Command eq "playerdir")
 		{
 			$PlayersDir = $Setting;
+		}
+		if ($Command eq "mmcdir")
+		{
+			$MMCDir = $Setting;
+		}
+		if ($Command eq "startupdir")
+		{
+			$StartupDir = $Setting;
 		}
 		if ($Command eq "minetestconf")
 		{
@@ -130,6 +146,10 @@ if (-f $MySettings)
 		{
 			$BACKUP_DIR = $Setting;
 		}
+		if ($Command eq "backuptooldir")
+		{
+			$BackupToolDir = $Setting;
+		}
 		if ($Command eq "restorecommand")
 		{
 			$RestoreCommand = $Setting;
@@ -149,14 +169,18 @@ else
 	print $FH "initdname=$InitDName\n";
 	print $FH "minetestdir=$MINETESTDIR\n";
 	print $FH "backupcommand=$BackupCommand\n";
+	print $FH "updatecommand=$UpdateCommand\n";
 	print $FH "pagercommand=$PagerCommand\n";
 	print $FH "logfile=$Logfile\n";
 	print $FH "playerdir=$PlayersDir\n";
+	print $FH "mmcdir=$MMCDir\n";
+	print $FH "startupdir=$StartupDir\n";
 	print $FH "minetestconf=$MINETESTDIR/minetest.conf\n";
 	print $FH "minetestworld=$MINETESTDIR/worlds/world/world.mt\n";
 	print $FH "newsfile=$MINETESTDIR/worlds/world/news.txt\n";
 	print $FH "debugmode=$DEBUG_MODE\n";
 	print $FH "backupdir=$BACKUP_DIR\n";
+	print $FH "backuptooldir=$BackupToolDir\n";
 	print $FH "restorecommand=$RestoreCommand\n";
 	print $FH "minehome=$MINEHOME\n";
 	close($FH);
@@ -188,6 +212,21 @@ sub BackupToolsMenu
 	$menuselection = $d->menu( title => "Backup Tools Menu", text => "Server is $ServerStatus and respawn is $WantRespawn - Select one:",
                             list => [ '1', 'Run Backup',
                                       '2', 'Restore Backup',
+                                      'q', 'Main Menu' ] );
+}
+
+sub UpdateToolsMenu
+{
+	my $WantRespawn="ON";
+	CheckServerStatus();
+	if (-f "$MINETESTDIR/nostart")
+	{
+		$WantRespawn="OFF";
+	}
+	$menuselection = $d->menu( title => "Backup Tools Menu", text => "Server is $ServerStatus and respawn is $WantRespawn - Select one:",
+                            list => [ '1', 'Update MMC',
+                                      '2', 'Update Backup',
+                                      '3', 'Update Startup',
                                       'q', 'Main Menu' ] );
 }
 
@@ -309,6 +348,44 @@ sub BackupTools
 	}
 }
 
+sub DoUpdate
+{
+	my $DesiredDir = $_[0];
+
+	# Update desired utility
+	chdir ($DesiredDir);
+	PrintDebugCommand("Running $UpdateCommand in $DesiredDir\n");
+	system("$UpdateCommand");
+	print "Press Enter To Continue";
+	my $entered = <STDIN>;
+}
+
+sub UpdateTools
+{
+	while (-1)
+	{
+		UpdateToolsMenu();
+		if (($menuselection eq "CANCEL") || ($menuselection eq "ESC") || ($menuselection eq "") || ($menuselection eq "q") || ($menuselection eq "Q"))
+		{
+			return;
+		}
+		elsif ($menuselection eq "1")
+		{
+			# Update MMC
+			DoUpdate($MMCDir);
+		}
+		elsif ($menuselection eq "2")
+		{
+			# Update BackupToolDir
+			DoUpdate($BackupToolDir);
+		}
+		elsif ($menuselection eq "3")
+		{
+			# Update Startup
+			DoUpdate($StartupDir);
+		}
+	}
+}
 
 sub MainMenu
 {
@@ -333,6 +410,7 @@ sub MainMenu
                                       '11', 'Edit Settings',
                                       '12', 'Restart Server',
                                       '13', 'Edit News.txt',
+                                      '14', 'Update Utils',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -425,6 +503,11 @@ while (-1)
 	{
 		# Edit news.txt file
 		system("$FileEditor $NewsFile");
+	}
+	elsif ($menuselection eq "14")
+	{
+		# Update Menu
+		UpdateTools();
 	}
 }
 
