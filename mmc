@@ -26,6 +26,7 @@ my $BACKUP_DIR = "/home/mtowner/backups";
 my $RestoreCommand = "tar xvzf";
 my $DEBUG_MODE = "off";
 my $NewsFile = "/home/mtowner/minetest/worlds/world/news.txt";
+my $BinDir = "/home/mtowner/bin";
 
 ###################################################
 # No changes below here
@@ -33,7 +34,7 @@ my $NewsFile = "/home/mtowner/minetest/worlds/world/news.txt";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.10.0";
+my $MMC_ver = "1.10.1";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -146,6 +147,10 @@ if (-f $MySettings)
 		{
 			$BACKUP_DIR = $Setting;
 		}
+		if ($Command eq "bindir")
+		{
+			$BinDir = $Setting;
+		}
 		if ($Command eq "backuptooldir")
 		{
 			$BackupToolDir = $Setting;
@@ -180,6 +185,7 @@ else
 	print $FH "newsfile=$MINETESTDIR/worlds/world/news.txt\n";
 	print $FH "debugmode=$DEBUG_MODE\n";
 	print $FH "backupdir=$BACKUP_DIR\n";
+	print $FH "bindir=$BinDir\n";
 	print $FH "backuptooldir=$BackupToolDir\n";
 	print $FH "restorecommand=$RestoreCommand\n";
 	print $FH "minehome=$MINEHOME\n";
@@ -383,6 +389,9 @@ sub UpdateTools
 		{
 			# Update Startup
 			DoUpdate($StartupDir);
+			system("cp $StartupDir/minetest $BinDir");
+			system("cp $StartupDir/startrelay $BinDir");
+			system("cp $StartupDir/startminetest $MINETESTDIR");
 		}
 	}
 }
