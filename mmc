@@ -34,7 +34,7 @@ my $BinDir = "/home/mtowner/bin";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.10.1";
+my $MMC_ver = "1.11.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -406,8 +406,8 @@ sub MainMenu
 	}
 
 	$menuselection = $d->menu( title => "Main Menu", text => "Server is $ServerStatus and respawn is $WantRespawn - Select one:",
-                            list => [ '1', 'Start Server',
-                                      '2', 'Stop Server',
+                            list => [ '1', 'Start Watchdog',
+                                      '2', 'Stop Watchdog',
                                       '3', 'Server Console',
                                       '4', 'Turn Off Respawn',
                                       '5', 'Turn Respawn On',
