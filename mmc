@@ -28,13 +28,18 @@ my $DEBUG_MODE = "off";
 my $NewsFile = "/home/mtowner/minetest/worlds/world/news.txt";
 my $BinDir = "/home/mtowner/bin";
 
+my $ModDir = "/home/mtowner/minetest/mods";
+my $KillAllString = "/home/mtowner/minetest/bin/minetestserver";
+my $ServerProcess = "minetestserver";
+my $ServerStartString = "/home/mtowner/minetest/bin/startminetest";
+
 ###################################################
 # No changes below here
 ###################################################
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.11.0";
+my $MMC_ver = "1.12.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -194,7 +199,7 @@ else
 
 sub CheckServerStatus
 {
-	my $running=`ps ax|grep minetestserver|grep -v grep`;
+	my $running=`ps ax|grep $ServerProcess|grep -v grep`;
 	if ($running ne "")
 	{
 		$ServerStatus = "Running";
@@ -303,7 +308,7 @@ sub DoRestore
 	system("touch $MINETESTDIR/nostart");
 	# Kill the server process
 	print "Killing Minetest process, please wait...\n";
-	system("killall /home/mtowner/minetest/bin/startminetest");
+	system("killall $ServerStartString");
 	sleep(5);
 	# Create new folder
 	print "Creating new folder, please wait...";
@@ -396,6 +401,110 @@ sub UpdateTools
 	}
 }
 
+sub InstallMod
+{
+	system("clear");
+	print "Enter the URL for the mod: ";
+	my $modurl = <>;
+	chomp($modurl);
+	if ($modurl eq "")
+	{
+		# Input was blank
+		print "No URL Specified - aborting\n";
+		sleep 5;
+		return;
+	}
+	# Try and validate URL
+	if( lc(substr($modurl, 0, 4)) ne "http")
+	{
+		# Doesn;t start with http
+		print "URL doesn't start with http - aborting\n";
+		sleep 5;
+		return;
+	}
+	if( lc(substr($modurl, -4)) ne ".git")
+	{
+		# Doesn;t end in .git
+		print "URL doesn't end with .git - aborting\n";
+		sleep 5;
+		return;
+	}
+	print "URL looks good - trying to clone\n";
+	chdir($ModDir);
+	system("git clone $modurl");
+	print "Were any errors reported? (N/y):";
+	my $input = <>;
+	chomp($input);
+	if (lc($input) eq "y")
+	{
+		print "Clone failed, please check URL or correct the issue and try again\n";
+		sleep 5;
+		return;
+	}
+	system("echo \"-----\n\" >> $MinetestWorld");
+	if ($? != 0)
+	{
+		print "Could not append to file '$MinetestWorld' - check perms: $!";
+		sleep 5;
+		return;
+	}
+	print "Killing Server Process\n";
+	system("killall $KillAllString");
+	print "Process killed...";
+	print "Waiting for server to restart\n";
+	my $count = 0;
+	while ($count < 120)
+	{
+		$count += 5;
+		print "$count ";
+		sleep 5;
+	}
+	print "Checking for new mod in world.mt\n";
+
+	my $file = $MinetestWorld;
+	my $SeenStart = 0;
+	open(FH, $file) or die("Unable to open file $file for reading");
+	open(FH2, ">/tmp/newfile") or die("Unable to open file $file for writing");
+	while(my $String = <FH>)
+	{
+		if ($_)
+		{
+			chop();
+		}
+		if($String =~ /-----/)
+		{
+			$SeenStart = -1;
+			print "Saw Marker\n";
+			next;
+		}
+		if ($SeenStart)
+		{
+			my $NewString = $String =~ s/= false/= true/r;
+			print(FH2 $NewString);
+		}
+		else
+		{
+			print(FH2 $String);
+		}
+	}
+	close(FH);
+	close(FH2);
+	system("cp /tmp/newfile $file");
+	print "Killing Server Process\n";
+	system("killall $KillAllString");
+	print "Process killed...";
+	print "Waiting for server to restart\n";
+	my $count = 0;
+	while ($count < 120)
+	{
+		$count += 5;
+		print "$count ";
+		sleep 5;
+	}
+	print "\nInstall prooess completed\n";
+	sleep 5;
+}
+
 sub MainMenu
 {
 	my $WantRespawn="ON";
@@ -420,6 +529,7 @@ sub MainMenu
                                       '12', 'Restart Server',
                                       '13', 'Edit News.txt',
                                       '14', 'Update Utils',
+                                      '15', 'Install Mod',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -446,7 +556,7 @@ while (-1)
 		{
 			system("$InitDName stop");
 			sleep(5);
-			system("killall /home/mtowner/minetest/bin/startminetest");
+			system("killall $ServerStartString");
 		}
 	}
 	elsif ($menuselection eq "3")
@@ -504,7 +614,7 @@ while (-1)
 	{
 		# Reset server process
 		print "Killing Server Process\n";
-		system("killall /home/mtowner/minetest/bin/minetestserver");
+		system("killall $KillAllString");
 		print "Process killed...";
 		sleep(5);
 	}
@@ -518,6 +628,11 @@ while (-1)
 		# Update Menu
 		UpdateTools();
 	}
+	elsif ($menuselection eq "15")
+        {
+                # Install Mod
+                InstallMod();
+        }
 }
 
 exit 0;
