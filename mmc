@@ -32,6 +32,10 @@ my $ModDir = "/home/mtowner/minetest/mods";
 my $KillAllString = "/home/mtowner/minetest/bin/minetestserver";
 my $ServerProcess = "minetestserver";
 my $ServerStartString = "/home/mtowner/minetest/bin/startminetest";
+my $DfCommand = "df -h /dev/sda";
+my $DuCommand = "du -h /home/mtowner/|tail -1";
+my $FilesToRemove = "$MINETESTDIR/debug.txt $MINETESTDIR/MinetestScreen.log";
+my $CrontabCommand = "crontab -e";
 
 ###################################################
 # No changes below here
@@ -39,7 +43,7 @@ my $ServerStartString = "/home/mtowner/minetest/bin/startminetest";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.12.0";
+my $MMC_ver = "1.13.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -505,6 +509,41 @@ sub InstallMod
 	sleep 5;
 }
 
+sub RemoveFiles
+{
+        for (split ' ', $FilesToRemove)
+        {
+                if (-f $_)
+                {
+                        unlink($_);
+                }
+        }
+}
+
+sub SpaceUsage
+{
+        system("clear");
+        print "System Space:\n";
+        print "==================\n";
+        system("$DfCommand");
+        print "\nSpace Used by You:\n";
+        print "==================\n";
+        system("$DuCommand");
+        print "\nDo you want to remove logs and other expendable items? (N/y): ";
+        my $input = <>;
+        chomp($input);
+        $input = lc($input);
+        if (($input eq "y") || ($input eq "yes"))
+        {
+                RemoveFiles();
+                print "Possible files removed...\n";
+                sleep 5;
+                return;
+        }
+        print "Leaving temporary files alone\n";
+        sleep 5;
+}
+
 sub MainMenu
 {
 	my $WantRespawn="ON";
@@ -530,6 +569,8 @@ sub MainMenu
                                       '13', 'Edit News.txt',
                                       '14', 'Update Utils',
                                       '15', 'Install Mod',
+                                      '16', 'Space Usage',
+                                      '17', 'Scheduled Tasks',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -632,6 +673,16 @@ while (-1)
         {
                 # Install Mod
                 InstallMod();
+        }
+        elsif ($menuselection eq "16")
+        {
+                # Space Usage
+                SpaceUsage();
+        }
+        elsif ($menuselection eq "17")
+        {
+                # Space Usage
+                system("$CrontabCommand");
         }
 }
 
