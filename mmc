@@ -36,6 +36,7 @@ my $DfCommand = "df -h /dev/sda";
 my $DuCommand = "du -h /home/mtowner/|tail -1";
 my $FilesToRemove = "$MINETESTDIR/debug.txt $MINETESTDIR/MinetestScreen.log";
 my $CrontabCommand = "crontab -e";
+my $BuildCommand = "make";
 
 ###################################################
 # No changes below here
@@ -43,7 +44,7 @@ my $CrontabCommand = "crontab -e";
 
 my $MySettings = "$ENV{'HOME'}/.mmcrc";
 
-my $MMC_ver = "1.13.0";
+my $MMC_ver = "1.14.0";
 my $Record = "false";	# Are results saved?
 my $TempDir = "/tmp";
 my $RobotName = "";
@@ -363,6 +364,139 @@ sub BackupTools
 	}
 }
 
+sub RebuildServer
+{
+        chdir($MINETESTDIR);
+        system("clear");
+        system($BuildCommand);
+        print "--- Press Enter To Continue ---";
+        my $entered = <STDIN>;
+}
+
+sub UpdateServer
+{
+        chdir($MINETESTDIR);
+        system("clear");
+        system($UpdateCommand);
+        print "--- Press Enter To Continue ---";
+        my $entered = <STDIN>;
+}
+
+sub UpdateMods
+{
+        chdir($ModDir);
+        system("clear");
+        print "Updating your mods\n";
+        print "==================\n";
+        my $ModPrompt = "";
+        my $entered = "";
+        #       system($UpdateCommand);
+        opendir(DIR, $ModDir) or die "Could not open $ModDir\n";
+        # Loop for each directory
+        while (my $filename = readdir(DIR))
+        {
+                if (($filename eq ".") || ($filename eq ".."))
+                {
+                        # Skip over "." and ".."
+                        next;
+                }
+                #print "$filename\n" if -d $filename;
+                if (-d $filename)
+                {
+                        print "Current mod: $filename:\n";
+                        print "Update this mod (yes/no/quit):";
+                        $ModPrompt = <STDIN>;
+                        chop($ModPrompt);
+                        if (($ModPrompt eq "quit") || ($ModPrompt eq "q"))
+                        {
+                                last;
+                        }
+                        if (($ModPrompt eq "no") || ($ModPrompt eq "n"))
+                        {
+                                next;
+                        }
+                        #                       chdir("$ModDir/$filename");
+                        system("git pull");
+                        #                       print "--- Press Enter To Continue ---";
+                        #                       my $entered = <STDIN>;
+                }
+        }
+        closedir(DIR);
+        print "--- Press Enter To Continue ---";
+        $entered = <STDIN>;
+}
+sub UpdateGame
+{
+        chdir("$MINETESTDIR/game/minetest_game");
+        system("clear");
+        system($UpdateCommand);
+        print "--- Press Enter To Continue ---";
+        my $entered = <STDIN>;
+}
+
+sub ServerToolsMenu
+{
+        my $WantRespawn="ON";
+        CheckServerStatus();
+        if (-f "$MINETESTDIR/nostart")
+        {
+                $WantRespawn="OFF";
+        }
+        $menuselection = $d->menu( title => "Server Tools Menu", text => "Server is $ServerStatus and respawn is $WantRespawn - Select one:",
+                            list => [ '1', 'Run Backup First',
+                                      '2', 'Get Updates',
+                                      '3', 'Rebuild Server',
+                                      '4', 'Update Game',
+                                      '5', 'Update Mods',
+                                      'q', 'Main Menu' ] );
+}
+
+sub ServerTools
+{
+        while (-1)
+        {
+                ServerToolsMenu();
+                if (($menuselection eq "CANCEL") || ($menuselection eq "ESC") || ($menuselection eq "") || ($menuselection eq "q") || ($menuselection eq "Q"))
+                {
+                        return;
+                }
+                elsif ($menuselection eq "1")
+                {
+                        # Run a backup
+                        system("clear");
+                        PrintDebugCommand("$BackupCommand");
+                        system("$BackupCommand");
+                        print "Press Enter To Continue";
+                        my $entered = <STDIN>;
+                }
+                elsif ($menuselection eq "2")
+                {
+                        # Pull Updates
+                        PrintDebugCommand("$UpdateCommand");
+                        UpdateServer();
+                }
+                elsif ($menuselection eq "3")
+                {
+                        # Rebuild Server
+                        PrintDebugCommand("$BuildCommand");
+                        RebuildServer();
+                }
+                elsif ($menuselection eq "4")
+                {
+                        # Rebuild Server
+                        PrintDebugCommand("Updating Game");
+                        UpdateGame();
+                }
+                elsif ($menuselection eq "5")
+                {
+                        # Rebuild Server
+                        PrintDebugCommand("Updating Mods");
+                        UpdateMods();
+                }
+        }
+}
+
+
 sub DoUpdate
 {
 	my $DesiredDir = $_[0];
@@ -571,6 +705,8 @@ sub MainMenu
                                       '15', 'Install Mod',
                                       '16', 'Space Usage',
                                       '17', 'Scheduled Tasks',
+				      '18', 'Current Version',
+                                      '19', 'Server Tasks',
                                       'q', 'Quit MMC' ] );
 }
 
@@ -683,6 +819,19 @@ while (-1)
         {
                 # Space Usage
                 system("$CrontabCommand");
+        }
+	elsif ($menuselection eq "18")
+        {
+                # Get Version
+                system("clear");
+                system("$MINETESTDIR/bin/$ServerProcess --version");
+                print "Press Enter To Continue";
+                my $entered = <STDIN>;
+        }
+        elsif ($menuselection eq "19")
+        {
+                # Server Tools
+                ServerTools();
         }
 }
 
